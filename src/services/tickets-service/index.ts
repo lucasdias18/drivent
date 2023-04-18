@@ -1,4 +1,4 @@
-import { notFoundError } from '@/errors';
+import { notFoundError, unauthorizedError } from '@/errors';
 import ticketRepository from '@/repositories/tickets-repository';
 
 export async function getTicketsTypesService() {
@@ -6,6 +6,9 @@ export async function getTicketsTypesService() {
 }
 
 export async function getTicketsByUser(userId: number) {
+  if (!userId) throw unauthorizedError();
+  console.log(userId);
+
   const ticketUser = await ticketRepository.findTicketsByUser(userId);
 
   if (!ticketUser) throw notFoundError();
@@ -18,5 +21,13 @@ export async function postTicketsService(ticketTypeId: number, userId: number) {
 
   if (!createTicket) throw notFoundError();
 
-  return createTicket;
+  return {
+    id: createTicket.id,
+    status: createTicket.status,
+    ticketTypeId: createTicket.ticketTypeId,
+    enrollmentId: createTicket.enrollmentId,
+    TicketType: createTicket.ticketType,
+    createdAt: createTicket.createdAt,
+    updatedAt: createTicket.updatedAt,
+  };
 }

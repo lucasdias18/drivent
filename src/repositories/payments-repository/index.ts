@@ -32,7 +32,7 @@ async function createPayment(userId: number, cardData: Data) {
     where: { userId: userId },
   });
 
-  if (ticket.enrollmentId !== enrollment.id) throw unauthorizedError();
+  if (ticket.enrollmentId !== enrollment.id) return 0;
 
   const findPrice = await prisma.ticketType.findFirst({
     where: { id: ticket.ticketTypeId },
