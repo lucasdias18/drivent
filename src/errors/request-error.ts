@@ -1,4 +1,4 @@
-import { RequestError } from '@/protocols';
+import { ApplicationError, RequestError } from '@/protocols';
 
 export function requestError(status: number, statusText: string): RequestError {
   return {
@@ -7,5 +7,12 @@ export function requestError(status: number, statusText: string): RequestError {
     status,
     statusText,
     message: 'No result for this search!',
+  };
+}
+
+export function badRequestError(): ApplicationError {
+  return {
+    name: 'BAD_REQUEST',
+    message: 'Bad request',
   };
 }

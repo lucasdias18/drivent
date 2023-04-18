@@ -1,14 +1,14 @@
-// import { Router } from 'express';
-// import { authenticateToken, validateBody } from '@/middlewares';
-// import { getEnrollmentByUser, postCreateOrUpdateEnrollment, getAddressFromCEP } from '@/controllers';
-// import { createEnrollmentSchema } from '@/schemas';
+import { Router } from 'express';
+import { createPayment, getPayments } from '@/controllers/payments-controller';
+import { authenticateToken, validateBody } from '@/middlewares';
+import { paymentSchema } from '@/schemas/payments-schemas';
 
-// const enrollmentsRouter = Router();
+const paymentsRouter = Router();
 
-// enrollmentsRouter
-//   .post('/process', getAddressFromCEP)
-//   .all('/*', authenticateToken)
-//   .get('/', getEnrollmentByUser)
-//   .post('/', validateBody(createEnrollmentSchema), postCreateOrUpdateEnrollment);
+paymentsRouter
+  .get('/', getPayments)
+  .all('/*', authenticateToken)
+  //   .get('/', getEnrollmentByUser)
+  .post('/process', validateBody(paymentSchema), createPayment);
 
-// export { enrollmentsRouter };
+export { paymentsRouter };

@@ -1,12 +1,6 @@
 import { notFoundError } from '@/errors';
 import ticketRepository from '@/repositories/tickets-repository';
 
-// export async function postTicketsService(ticketTypeId: number) {
-//     const findTicketType = await ticketRepository.findTicketTypeById(ticketTypeId)
-
-//     const
-// }
-
 export async function getTicketsTypesService() {
   return ticketRepository.findTicketsTypes();
 }
@@ -17,4 +11,12 @@ export async function getTicketsByUser(userId: number) {
   if (!ticketUser) throw notFoundError();
 
   return ticketUser;
+}
+
+export async function postTicketsService(ticketTypeId: number, userId: number) {
+  const createTicket = await ticketRepository.createTicketOrFail(ticketTypeId, userId);
+
+  if (!createTicket) throw notFoundError();
+
+  return createTicket;
 }
