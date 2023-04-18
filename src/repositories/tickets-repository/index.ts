@@ -43,7 +43,7 @@ async function createTicketOrFail(ticketTypeId: number, userId: number) {
       enrollmentId: enrollmentUser,
     },
   });
-  console.log(createTicket);
+  // console.log(createTicket);
 
   return { ...createTicket, ticketType: ticketType };
 }

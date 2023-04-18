@@ -22,9 +22,9 @@ export async function getTickets(req: AuthenticatedRequest, res: Response) {
     const tickets = await getTicketsByUser(userId);
     // console.log(tickets)
 
-    return tickets;
+    return res.status(httpStatus.OK).send(tickets);
   } catch (error) {
-    res.sendStatus(httpStatus.NO_CONTENT);
+    res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }
 
