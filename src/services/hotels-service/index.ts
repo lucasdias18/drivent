@@ -5,8 +5,8 @@ import { findRoomsByHotelId, getHotelsRepository } from '@/repositories/hotels-r
 import ticketsRepository from '@/repositories/tickets-repository';
 
 export async function getHotelsService(userId: number) {
-  console.log(userId);
-  if (!userId) throw unauthorizedError();
+  // console.log(userId);
+  // if (!userId) throw unauthorizedError();
 
   const findUser = await enrollmentRepository.findWithAddressByUserId(userId);
 
@@ -32,7 +32,7 @@ export async function getHotelsService(userId: number) {
 }
 
 export async function getRoomsHotelService(userId: number, hotelId: number) {
-  if (!userId) throw unauthorizedError();
+  // if (!userId) throw unauthorizedError();
 
   const findUser = await enrollmentRepository.findWithAddressByUserId(userId);
 

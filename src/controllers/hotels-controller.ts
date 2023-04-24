@@ -5,7 +5,7 @@ import { getHotelsService, getRoomsHotelService } from '@/services/hotels-servic
 
 export async function getHotels(req: AuthenticatedRequest, res: Response) {
   const { userId } = req as { userId: number };
-  console.log(userId);
+  // console.log(userId);
 
   try {
     const result = await getHotelsService(userId);
@@ -27,7 +27,7 @@ export async function getHotels(req: AuthenticatedRequest, res: Response) {
 
 export async function getRoomsHotel(req: AuthenticatedRequest, res: Response) {
   const { userId } = req as { userId: number };
-  console.log(userId);
+  // console.log(userId);
   const hotelId = Number(req.params) as number;
 
   try {
