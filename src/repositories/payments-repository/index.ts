@@ -1,63 +1,21 @@
-import { Ticket, Enrollment, Payment } from '@prisma/client';
 import { prisma } from '@/config';
-import { unauthorizedError } from '@/errors';
-import { Data } from '@/services/payments-service';
+import { PaymentParams } from '@/protocols';
 
-async function getPayment(userId: number, ticketId: number) {
-  const ticket = await prisma.ticket.findFirst({
-    where: { id: ticketId },
-  });
-
-  if (!ticket) return;
-
-  const enrollment = await prisma.enrollment.findFirst({
-    where: { userId: userId },
-  });
-
-  if (ticket.enrollmentId !== enrollment.id) throw unauthorizedError();
-
-  return await prisma.payment.findFirst({
-    where: { ticketId },
-  });
-}
-
-async function createPayment(userId: number, cardData: Data) {
-  const ticket = await prisma.ticket.findFirst({
-    where: { id: cardData.ticketId },
-  });
-
-  if (!ticket) return;
-
-  const enrollment = await prisma.enrollment.findFirst({
-    where: { userId: userId },
-  });
-
-  if (ticket.enrollmentId !== enrollment.id) return 0;
-
-  const findPrice = await prisma.ticketType.findFirst({
-    where: { id: ticket.ticketTypeId },
-  });
-
-  const payment = await prisma.payment.create({
-    data: {
-      ticketId: cardData.ticketId,
-      value: findPrice.price,
-      cardIssuer: cardData.cardData.issuer,
-      cardLastDigits: cardData.cardData.number.toString().slice(-4),
+async function findPaymentByTicketId(ticketId: number) {
+  return prisma.payment.findFirst({
+    where: {
+      ticketId,
     },
   });
-
-  await prisma.ticket.update({
-    where: { id: cardData.ticketId },
-    data: { status: 'PAID' },
-  });
-
-  return payment;
 }
 
-const paymentsRepository = {
-  getPayment,
-  createPayment,
-};
+async function createPayment(ticketId: number, params: PaymentParams) {
+  return prisma.payment.create({
+    data: {
+      ticketId,
+      ...params,
+    },
+  });
+}
 
-export default paymentsRepository;
+export default { findPaymentByTicketId, createPayment };
