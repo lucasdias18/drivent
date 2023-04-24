@@ -24,7 +24,7 @@ export async function getHotels(req: AuthenticatedRequest, res: Response) {
 
 export async function getRoomsHotel(req: AuthenticatedRequest, res: Response) {
   const { userId } = req as { userId: number };
-  // console.log(userId)
+  console.log(userId);
   const hotelId = Number(req.params) as number;
 
   try {
@@ -38,6 +38,6 @@ export async function getRoomsHotel(req: AuthenticatedRequest, res: Response) {
     if (error.name === 'payment required') {
       return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     }
-    return res.sendStatus(httpStatus.BAD_REQUEST);
+    return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }
