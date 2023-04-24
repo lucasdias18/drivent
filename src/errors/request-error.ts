@@ -12,7 +12,7 @@ export function requestError(status: number, statusText: string): RequestError {
 
 export function badRequestError(): ApplicationError {
   return {
-    name: 'BAD_REQUEST',
-    message: 'Bad request',
+    name: 'badRequestError',
+    message: 'bad request',
   };
 }
