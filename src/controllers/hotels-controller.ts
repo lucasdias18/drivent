@@ -18,7 +18,10 @@ export async function getHotels(req: AuthenticatedRequest, res: Response) {
     if (error.name === 'payment required') {
       return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     }
-    return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.name === 'UnauthorizedError') {
+      return res.sendStatus(httpStatus.UNAUTHORIZED);
+    }
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
 
@@ -38,6 +41,7 @@ export async function getRoomsHotel(req: AuthenticatedRequest, res: Response) {
     if (error.name === 'payment required') {
       return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     }
-    return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.name === 'UnauthorizedError') return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
+  return res.sendStatus(httpStatus.BAD_REQUEST);
 }

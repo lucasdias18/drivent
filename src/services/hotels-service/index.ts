@@ -32,7 +32,7 @@ export async function getHotelsService(userId: number) {
 }
 
 export async function getRoomsHotelService(userId: number, hotelId: number) {
-  // if (!userId) throw badRequestError()
+  if (!userId) throw unauthorizedError();
 
   const findUser = await enrollmentRepository.findWithAddressByUserId(userId);
 
