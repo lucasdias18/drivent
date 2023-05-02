@@ -1,56 +1,43 @@
-import { badRequestError, notFoundError, unauthorizedError } from '@/errors';
-import { paymentRequired } from '@/errors/payment-error';
+import hotelRepository from '@/repositories/hotel-repository';
 import enrollmentRepository from '@/repositories/enrollment-repository';
-import { findRoomsByHotelId, getHotelsRepository } from '@/repositories/hotels-repository';
+import { notFoundError } from '@/errors';
 import ticketsRepository from '@/repositories/tickets-repository';
+import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
 
-export async function getHotelsService(userId: number) {
-  // console.log(userId);
-  // if (!userId) throw unauthorizedError();
-
-  const findUser = await enrollmentRepository.findWithAddressByUserId(userId);
-
-  if (!findUser) throw notFoundError();
-
-  const findTicket = await ticketsRepository.findTicketByEnrollmentId(findUser.id);
-
-  if (!findTicket) throw notFoundError();
-
-  if (
-    findTicket.status !== 'PAID' ||
-    findTicket.TicketType.includesHotel !== true ||
-    findTicket.TicketType.isRemote === true
-  ) {
-    throw paymentRequired();
+async function listHotels(userId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) {
+    throw notFoundError();
   }
+  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
 
-  const hotels = await getHotelsRepository();
+  if (!ticket || ticket.status === 'RESERVED' || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+    throw cannotListHotelsError();
+  }
+}
 
-  if (!hotels) throw notFoundError();
+async function getHotels(userId: number) {
+  await listHotels(userId);
 
+  const hotels = await hotelRepository.findHotels();
+  if (!hotels || hotels.length === 0) {
+    throw notFoundError();
+  }
   return hotels;
 }
 
-export async function getRoomsHotelService(userId: number, hotelId: number) {
-  // if (!userId) throw unauthorizedError();
+async function getHotelsWithRooms(userId: number, hotelId: number) {
+  await listHotels(userId);
 
-  const findUser = await enrollmentRepository.findWithAddressByUserId(userId);
+  const hotel = await hotelRepository.findRoomsByHotelId(hotelId);
 
-  if (!findUser) throw notFoundError();
-
-  const findTicket = await ticketsRepository.findTicketByEnrollmentId(findUser.id);
-
-  if (!findTicket) throw notFoundError();
-
-  if (
-    findTicket.status !== 'PAID' ||
-    findTicket.TicketType.includesHotel !== true ||
-    findTicket.TicketType.isRemote === true
-  ) {
-    throw paymentRequired();
+  if (!hotel || hotel.Rooms.length === 0) {
+    throw notFoundError();
   }
-
-  const rooms = await findRoomsByHotelId(hotelId);
-
-  return rooms;
+  return hotel;
 }
+
+export default {
+  getHotels,
+  getHotelsWithRooms,
+};
